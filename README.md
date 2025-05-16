@@ -1,29 +1,51 @@
 # Chess Opening Trainer
-  
-This is a project built with [Chef](https://chef.convex.dev) using [Convex](https://convex.dev) as its backend.
-  
-This project is connected to the Convex deployment named [`incredible-antelope-853`](https://dashboard.convex.dev/d/incredible-antelope-853).
-  
-## Project structure
-  
-The frontend code is in the `app` directory and is built with [Vite](https://vitejs.dev/).
-  
-The backend code is in the `convex` directory.
-  
-`npm run dev` will start the frontend and backend servers.
 
-## App authentication
+## Description
 
-Chef apps use [Convex Auth](https://auth.convex.dev/) with Anonymous auth for easy sign in. You may wish to change this before deploying your app.
+A brief description of your project. What does it do? Who is it for?
 
-## Developing and deploying your app
+## Features
 
-Check out the [Convex docs](https://docs.convex.dev/) for more information on how to develop with Convex.
-* If you're new to Convex, the [Overview](https://docs.convex.dev/understanding/) is a good place to start
-* Check out the [Hosting and Deployment](https://docs.convex.dev/production/) docs for how to deploy your app
-* Read the [Best Practices](https://docs.convex.dev/understanding/best-practices/) guide for tips on how to improve you app further
+*   List key features of your application.
+*   For example:
+    *   Train specific chess openings.
+    *   Track your progress.
+    *   Import PGN files.
 
-## HTTP API
+## Installation
 
-User-defined http routes are defined in the `convex/router.ts` file. We split these routes into a separate file from `convex/http.ts` to allow us to prevent the LLM from modifying the authentication routes.
-# chessOpeningTrainer
+Provide instructions on how to install and set up the project.
+
+```bash
+# Example installation steps
+git clone https://github.com/yourusername/chessOpeningTrainer.git
+cd chessOpeningTrainer
+# Add other installation commands if necessary (e.g., pip install -r requirements.txt)
+```
+
+## Usage
+
+Explain how to use the application. Provide examples if possible.
+
+```bash
+# Example usage
+python main.py
+```
+
+## Contributing
+
+If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are warmly welcome.
+
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+## License
+
+Specify the license for your project. For example, MIT License.
+
+---
+
+*This is a basic template. Feel free to expand on any section or add new ones as needed for your project.*

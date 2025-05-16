@@ -10,8 +10,8 @@ export function ChessTrainer() {
   const [orientation, setOrientation] = useState<Color>("white");
   const [playerColor, setPlayerColor] = useState<Color | null>(null);
   const [hasOpeningLoaded, setHasOpeningLoaded] = useState(false);
-  const currentLine = useRef<any[]>([]);
-  const originalLine = useRef<any[]>([]);
+  const currentLine = useRef<{ from: string; to: string; promotion?: string; san: string }[]>([]);
+  const originalLine = useRef<{ from: string; to: string; promotion?: string; san: string }[]>([]);
 
   const handlePgnUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -43,13 +43,16 @@ export function ChessTrainer() {
     setGame(new Chess());
     setPlayerColor(null);
     currentLine.current = [...originalLine.current];
-    setHasOpeningLoaded(false);
+    setHasOpeningLoaded(true);
   };
 
   const makeMove = (move: any) => {
     try {
+      console.log(`Trying to make a move: `, move);
       const gameCopy = new Chess(game.fen());
       const result = gameCopy.move(move);
+
+      // console.log("Length current line", currentLine.current.length);
 
       if (result) {
         setGame(gameCopy);
@@ -76,9 +79,13 @@ export function ChessTrainer() {
                   currentLine.current.shift(); // Remove computer's move
                   setGame(newGame);
                 }
+
+                if (currentLine.current.length === 0) {
+                  toast.success("End of line reached! Resetting position...");
+                  resetPosition();
+                }
               }, 300);
-            }
-            else{
+            } else {
               // reset the position
             }
           } else {
@@ -107,8 +114,15 @@ export function ChessTrainer() {
             }
           }, 1000);
         }
+
+        // check if line is empty
+        if (currentLine.current.length === 0) {
+          toast.success("End of line reached! Resetting position...");
+          resetPosition();
+        }
         return true;
       }
+
       return false;
     } catch (err) {
       console.error("Move error:", err);
@@ -117,6 +131,7 @@ export function ChessTrainer() {
   };
 
   const onDrop = (sourceSquare: string, targetSquare: string) => {
+    console.log(playerColor, game.turn());
     if (!playerColor || game.turn() !== playerColor[0]) return false;
 
     return makeMove({
@@ -127,78 +142,98 @@ export function ChessTrainer() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-8">
-      <div className="flex-1">
-        <div className="mb-4">
-          <input
-            type="file"
-            accept=".pgn"
-            onChange={handlePgnUpload}
-            className="mb-4 block"
-          />
+    <div className="flex flex-row gap-8">
+      {/* Left side: Chessboard */}
+      <div className="w-[60%]">
+      <Chessboard
+        position={game.fen()}
+        onPieceDrop={onDrop}
+        boardOrientation={orientation}
+      />
+      </div>
 
-          {hasOpeningLoaded && !playerColor && (
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={() => {
-                  setPlayerColor("white");
-                  setOrientation("white");
-                }}
-                className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-              >
-                Play as White
-              </button>
-              <button
-                onClick={() => {
-                  setPlayerColor("black");
-                  setOrientation("black");
-                  const newGame = new Chess();
-                  const firstMove = currentLine.current[0];
-                  if (firstMove) {
-                    newGame.move({
-                      from: firstMove.from,
-                      to: firstMove.to,
-                      promotion: firstMove.promotion,
-                    });
-                    currentLine.current.shift();
-                    setGame(newGame);
-                  }
-                }}
-                className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-              >
-                Play as Black
-              </button>
-            </div>
-          )}
+      {/* Right side: Controls and Info */}
+      <div className="w-[40%] flex flex-col gap-4">
+      <div>
+        <input
+        type="file"
+        accept=".pgn"
+        onChange={handlePgnUpload}
+        className="mb-4 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+        />
 
-          {playerColor && (
-            <button
-              onClick={resetPosition}
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Reset Position
-            </button>
-          )}
+        {hasOpeningLoaded && !playerColor && (
+        <div className="flex gap-2 mb-4">
+          <button
+          onClick={() => {
+            setPlayerColor("white");
+            setOrientation("white");
+          }}
+          className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+          Play as White
+          </button>
+          <button
+          onClick={() => {
+            setPlayerColor("black");
+            setOrientation("black");
+            const newGame = new Chess(); // Start from initial position
+            const firstMove = originalLine.current[0]; // Use original line to get the first move
+            if (firstMove) {
+            const result = newGame.move({
+              from: firstMove.from,
+              to: firstMove.to,
+              promotion: firstMove.promotion,
+            });
+            if (result) {
+              currentLine.current = [...originalLine.current]; // Reset currentLine
+              currentLine.current.shift(); // Remove the first move as it's made by computer
+              setGame(newGame);
+            } else {
+              toast.error("Failed to make the first move for black.");
+            }
+            }
+          }}
+          className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+          Play as Black
+          </button>
         </div>
-        <div className="w-full max-w-[600px] mx-auto">
-          <Chessboard
-            position={game.fen()}
-            onPieceDrop={onDrop}
-            boardOrientation={orientation}
-          />
+        )}
+
+        {playerColor && (
+        <button
+          onClick={resetPosition}
+          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
+        >
+          Reset Position
+        </button>
+        )}
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Current Position FEN</h3>
+        <div className="font-mono bg-gray-100 p-2 rounded text-sm break-all">
+        {game.fen()}
         </div>
       </div>
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold mb-2">Current Position</h3>
-        <div className="font-mono">{game.fen()}</div>
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Remaining Moves</h3>
-          <div className="font-mono">
-            {currentLine.current.map((move, i) => (
-              <span key={i}>{move.san} </span>
-            ))}
-          </div>
+
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold mb-2">Remaining Moves in Line</h3>
+        <div className="font-mono bg-gray-100 p-2 rounded text-sm max-h-60 overflow-y-auto">
+        {currentLine.current.map((move, i) => (
+          <span key={i} className="mr-1">
+          {move?.san || "Unknown"}
+          </span>
+        ))}
+        {currentLine.current.length === 0 && hasOpeningLoaded && (
+          <span>No more moves in this line.</span>
+        )}
+         {!hasOpeningLoaded && (
+          <span>Load a PGN to see moves.</span>
+        )}
         </div>
+      </div>
       </div>
     </div>
   );
