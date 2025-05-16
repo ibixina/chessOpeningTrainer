@@ -22,8 +22,9 @@ export function ChessTrainer() {
       const text = e.target?.result as string;
       try {
         const tempChess = new Chess();
-        tempChess.loadPgn(text);
-        
+        tempChess.loadPgn(text); // reads the pgn
+        // the pgn file from lichess contains multiple games, so need to parse and build a tree with all different lines
+
         const moves = tempChess.history({ verbose: true });
         originalLine.current = [...moves];
         currentLine.current = [...moves];
@@ -49,18 +50,18 @@ export function ChessTrainer() {
     try {
       const gameCopy = new Chess(game.fen());
       const result = gameCopy.move(move);
-      
+
       if (result) {
         setGame(gameCopy);
-        
+
         // Check if there's a next move in the line
         if (currentLine.current.length > 0) {
           const expectedMove = currentLine.current[0];
-          
+
           // Verify the player's move matches the expected move
           if (move.from === expectedMove.from && move.to === expectedMove.to) {
             currentLine.current.shift(); // Remove the player's move
-            
+
             // Make the computer's move if there is one
             if (currentLine.current.length > 0) {
               const computerMove = currentLine.current[0];
@@ -77,6 +78,9 @@ export function ChessTrainer() {
                 }
               }, 300);
             }
+            else{
+              // reset the position
+            }
           } else {
             toast.error("Incorrect move! Try again.");
             setGame(game); // Revert to previous position
@@ -88,7 +92,7 @@ export function ChessTrainer() {
             const newGame = new Chess();
             currentLine.current = [...originalLine.current];
             setGame(newGame);
-            
+
             if (playerColor === "black") {
               const firstMove = currentLine.current[0];
               if (firstMove) {
@@ -114,7 +118,7 @@ export function ChessTrainer() {
 
   const onDrop = (sourceSquare: string, targetSquare: string) => {
     if (!playerColor || game.turn() !== playerColor[0]) return false;
-    
+
     return makeMove({
       from: sourceSquare,
       to: targetSquare,
@@ -132,7 +136,7 @@ export function ChessTrainer() {
             onChange={handlePgnUpload}
             className="mb-4 block"
           />
-          
+
           {hasOpeningLoaded && !playerColor && (
             <div className="flex gap-2 mb-4">
               <button
@@ -166,7 +170,7 @@ export function ChessTrainer() {
               </button>
             </div>
           )}
-          
+
           {playerColor && (
             <button
               onClick={resetPosition}
