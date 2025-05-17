@@ -1,5 +1,7 @@
 # Chess Opening Trainer
 
+# Live Site: https://ibixina.github.io/chessOpeningTrainer/
+
 A modern web application for practicing chess openings through interactive training sessions. Built with React, Chess.js.
 
 ## Features
