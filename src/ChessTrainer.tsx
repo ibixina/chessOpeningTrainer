@@ -142,9 +142,29 @@ export function ChessTrainer() {
     if (currentGameIndex >= games.length) {
       currentGameIndex = 0;
     }
+
+    const newGame = new Chess();
     originalLine.current = [...games[currentGameIndex]]; 
     currentLine.current = [...games[currentGameIndex]];
-    setGame(new Chess());
+    
+    console.log("Restarting game with index:", currentGameIndex);
+    console.log("Player color:", playerColor);
+    if (playerColor === "black") {
+
+      const firstMove = originalLine.current[0];
+      if (firstMove) {
+        const result = newGame.move({
+          from: firstMove.from,
+          to: firstMove.to,
+          promotion: firstMove.promotion,
+        });
+        if (result) {
+          currentLine.current.shift(); // Remove the first move as it's made by computer
+        }
+      }
+    }
+
+    setGame(newGame);
     setHasOpeningLoaded(true);
   };
 
