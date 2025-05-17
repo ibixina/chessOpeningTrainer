@@ -1,6 +1,6 @@
 # Chess Opening Trainer
 
-A modern web application for practicing chess openings through interactive training sessions. Built with React, Chess.js, and Convex.
+A modern web application for practicing chess openings through interactive training sessions. Built with React, Chess.js.
 
 ## Features
 
@@ -20,11 +20,6 @@ A modern web application for practicing chess openings through interactive train
   - React-Chessboard for the interactive board
   - Tailwind CSS for styling
   - Sonner for toast notifications
-
-- **Backend:**
-  - Convex for backend services
-  - Anonymous authentication
-  - Real-time data synchronization
 
 ## Getting Started
 
@@ -47,12 +42,7 @@ cd chessOpeningTrainer
 npm install
 ```
 
-3. Set up environment variables:
-```bash
-cp .env.example .env.local
-```
-
-4. Start the development server:
+3. Start the development server:
 ```bash
 npm run dev
 ```
@@ -80,9 +70,6 @@ chessOpeningTrainer/
 │   ├── ChessTrainer.tsx    # Main game component
 │   ├── App.tsx             # Root component
 │   └── index.css           # Global styles
-├── convex/
-│   ├── schema.ts           # Database schema
-│   └── router.ts           # API routes
 └── public/                 # Static assets
 ```
 
@@ -95,11 +82,6 @@ chessOpeningTrainer/
 - `npm run lint` - Run ESLint
 - `npm run test` - Run tests
 
-### Environment Variables
-
-```env
-VITE_CONVEX_URL=your_convex_deployment_url
-```
 
 ## Contributing
 
@@ -114,7 +96,6 @@ VITE_CONVEX_URL=your_convex_deployment_url
 
 - [Chess.js](https://github.com/jhlywa/chess.js) for chess logic
 - [React-Chessboard](https://github.com/Clariity/react-chessboard) for the chessboard component
-- [Convex](https://www.convex.dev/) for backend services
 
 ## Support
 
